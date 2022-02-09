@@ -12,10 +12,12 @@
 #include <errno.h> 
 #include <sys/select.h>
 
- 
 
- static const char klipperPath[] = "/tmp/printer";
-       int hFD; 
+
+
+
+static const char klipperPath[] = "/tmp/printer";
+int hFD; 
 
 int readMaxTime(int fd, char *buf, int len, int timeout_uSec)
 {
@@ -32,7 +34,7 @@ int readMaxTime(int fd, char *buf, int len, int timeout_uSec)
   if(rv == -1)
     perror("select"); /* an error accured */
   else if(rv == 0)
-    return -1;
+    return 0;
   else
     return read( fd, buf, len ); /* there was data to read */
 }
@@ -60,17 +62,23 @@ int main(int argc, void *args)
         printf("Failed to respond to status\r\n");
         return 1;
     }
-   
-
+   //int hstdin = open(stdin,O_RDONLY);
+char input[80];
+int input_pos=0;
     while (running)
     {
-        ret = fgets(line,80,stdin);
-        write(hFD,line,strlen(line));
-        ret = readMaxTime(hFD,line,80,10000000);
-        if (ret>0)
-        {
-            printf("%.*s",ret,line);
-        }
+      // read from stdin
+      input_pos = readMaxTime(0,input,80,1000);
+      if (input[input_pos-1]=='\n')
+      {
+        write(hFD,input,input_pos);
+        input_pos=0;
+      }
+      ret = readMaxTime(hFD,line,80,1000);
+      if (ret>0)
+      {
+          printf("%.*s",ret,line);
+      }
 
     }
     return 0;
