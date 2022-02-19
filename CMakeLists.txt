@@ -21,7 +21,7 @@ SET(CMAKE_CXX_FLAGS "-O3")
 # include_directories(${SDL2_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 
 
-add_executable(main main.c  ${SOURCES} ${INCLUDES})
+add_executable(main main.c klipper.c ${SOURCES} ${INCLUDES})
 add_compile_definitions(LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main PRIVATE m pthread)
 add_custom_target (run COMMAND ${EXECUTABLE_OUTPUT_PATH}/main)
